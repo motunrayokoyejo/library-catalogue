@@ -1,0 +1,53 @@
+services:
+  mysql_container:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: koyejo
+      MYSQL_DATABASE: library_db
+      MYSQL_USER: motunrayo
+      MYSQL_PASSWORD: koyejo
+    ports:
+      - "3300:3306" 
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - library_api_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend-api:
+    build: ./frontend-api
+    ports:
+      - "8000:8000"
+    depends_on:
+      mysql_container:
+        condition: service_healthy
+    environment:
+      - SQLALCHEMY_DATABASE_URL=mysql+mysqlconnector://motunrayo:koyejo@mysql_container:3306/library_frontend
+      - BACKEND_API_URL=http://backend-api:8001
+    networks:
+      - library_api_network
+    entrypoint: ["/app/entrypoint.sh"]  
+  backend-api:
+    build: ./admin-api
+    ports:
+      - "8001:8001"
+    depends_on:
+      mysql_container:
+        condition: service_healthy
+    environment:
+      - SQLALCHEMY_DATABASE_URL=mysql+mysqlconnector://motunrayo:koyejo@mysql_container:3306/library_admin
+      - FRONTEND_API_URL=http://frontend-api:8000
+    networks:
+      - library_api_network
+
+volumes:
+  mysql_data:
+
+networks:
+  library_api_network:
+    driver: bridge
