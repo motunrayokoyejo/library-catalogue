@@ -9,10 +9,10 @@ import requests
 
 app = FastAPI()
 
-FRONTEND_API_URL= config.FRONTEND_API_URL
+FRONTEND_API_URL= config.FRONTEND_API_URL or "http://localhost:8000"
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"message:": "Welcome to the Admin API"}
 
 @app.post("/books", status_code=201)
 def add_book(book: Book, db: Session = Depends(database.get_db)):
@@ -43,7 +43,7 @@ def list_loans(db: Session = Depends(database.get_db)):
         {
             "id": loan.id,
             "borrow_date": loan.borrow_date.strftime("%Y-%m-%d %H:%M:%S"),
-            "return_date": loan.return_date.strftime("%Y-%m-%d") if loan.return_date else None,
+            "return_date": loan.return_date.strftime("%Y-%m-%d"),
             "returned": loan.returned,
             "user": {
                 "id": loan.user.id,

@@ -20,7 +20,7 @@ class Loan(BaseModel):
     book_id: int
     user_id: int
     borrow_date: datetime = datetime.now()
-    return_date: date  # Store the intended return date
+    return_date: date 
     returned: bool = False
 
     __all__ = ["Book", "User", "Loan"]
