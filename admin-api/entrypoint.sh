@@ -1,7 +1,6 @@
-#!/bin/sh
+
 echo "Waiting for MySQL to be ready..."
 
-# Wait until MySQL is available
 while ! nc -z mysql_container 3306; do
   sleep 1
 done
