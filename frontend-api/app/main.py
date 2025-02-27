@@ -16,7 +16,7 @@ BACKEND_API_URL = config.BACKEND_API_URL
 print(f"Loaded FRONTEND_API_URL: {BACKEND_API_URL}") 
 @app.get("/")
 def read_root():
-    return {"message": "Hello, FastAPI!"}
+    return {"message": "Welcome Frontend API"}
 
 @app.get("/books", response_model=List[Book])
 def list_books(db: Session = Depends(database.get_db)):
